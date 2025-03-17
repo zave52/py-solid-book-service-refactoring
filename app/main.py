@@ -1,14 +1,19 @@
-from book import Book, display_book, print_book, serialize_book
+from app.book import (
+    Book,
+    DisplayBookHandler,
+    PrintBookHandler,
+    SerializeBookHandler
+)
 
 
 def main(book: Book, commands: list[tuple[str, str]]) -> None | str:
     for cmd, method_type in commands:
         if cmd == "display":
-            display_book(book, method_type)
+            DisplayBookHandler.execute(book, method_type)
         elif cmd == "print":
-            print_book(book, method_type)
+            PrintBookHandler.execute(book, method_type)
         elif cmd == "serialize":
-            return serialize_book(book, method_type)
+            return SerializeBookHandler.execute(book, method_type)
 
 
 if __name__ == "__main__":

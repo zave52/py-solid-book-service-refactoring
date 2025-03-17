@@ -79,28 +79,49 @@ class XMLBookSerializer(BookSerializer):
         return ET.tostring(root, encoding="unicode")
 
 
-def display_book(book: Book, display_type: str) -> None:
-    if display_type == "console":
-        ConsoleBookDisplayer.display(book)
-    elif display_type == "reverse":
-        ReverseBookDisplayer.display(book)
-    else:
-        raise ValueError(f"Unknown display type: {display_type}")
+class DisplayBookHandler:
+    strategies = {
+        "console": ConsoleBookDisplayer,
+        "reverse": ReverseBookDisplayer,
+    }
+
+    @staticmethod
+    def execute(book: Book, display_type: str) -> None:
+        displayer = DisplayBookHandler.strategies.get(display_type)
+
+        if displayer is None:
+            raise ValueError(f"Unknown display type: {display_type}")
+
+        displayer.display(book)
 
 
-def print_book(book: Book, print_type: str) -> None:
-    if print_type == "console":
-        ConsoleBookPrinter.print_book(book)
-    elif print_type == "reverse":
-        ReverseBookPrinter.print_book(book)
-    else:
-        raise ValueError(f"Unknown print type: {print_type}")
+class PrintBookHandler:
+    strategies = {
+        "console": ConsoleBookPrinter,
+        "reverse": ReverseBookPrinter,
+    }
+
+    @staticmethod
+    def execute(book: Book, print_type: str) -> None:
+        printer = PrintBookHandler.strategies.get(print_type)
+
+        if printer is None:
+            raise ValueError(f"Unknown print type: {print_type}")
+
+        printer.print_book(book)
 
 
-def serialize_book(book: Book, serialize_type: str) -> str:
-    if serialize_type == "json":
-        return JSONBookSerializer.serialize(book)
-    elif serialize_type == "xml":
-        return XMLBookSerializer.serialize(book)
-    else:
-        raise ValueError(f"Unknown serialize type: {serialize_type}")
+class SerializeBookHandler:
+    strategies = {
+        "json": JSONBookSerializer,
+        "xml": XMLBookSerializer,
+    }
+
+    @staticmethod
+    def execute(book: Book, serialize_type: str) -> str:
+        serializer = SerializeBookHandler.strategies.get(serialize_type)
+
+        if serializer is None:
+            raise ValueError(f"Unknown serialize type: {serialize_type}")
+
+        return serializer.serialize(book)
